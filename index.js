@@ -16,29 +16,33 @@ client.on('message', message => {
 
     // Retrieve person who sent command.
     const member = message.mentions.members.first()
+    // Change all messages to lowercase before parsing.
+    const messageContent = message.content.toLowerCase()
 
     // Show all available commands.
-    if (message.content.startsWith(`${prefix}help`) || message.content.startsWith(`${prefix}Help`)) {
+    if (messageContent.startsWith(`${prefix}help`) || messageContent.startsWith(`${prefix}bot`)) {
         message.channel.send(
             "Things I'm willing to do for you:\n" +
-            "1. Kick @member"
+            "1. niuKick @member"
         )
-
         // Set new playing with to whoever talked to him.
         client.user.setActivity(`with ${message.member.displayName}`)
     }
 
     // Kick
-    if (message.content.startsWith(`${prefix}kick`) || message.content.startsWith(`${prefix}Kick`)) {
+    if (messageContent.startsWith(`${prefix}kick`)) {
         // Check kick permissions.
-        if (message.member.hasPermission(['KICK_MEMBERS'])) {
-            member.kick().then((member) => {
-                message.channel.send("Yes master, " + member.displayName + " has been kicked.")
-            }).catch(() => {
+        if (message.member.hasPermission(['KICK_MEMBERS', 'BAN_MEMBERS'])) {
+            // To patch member.kick() undefined.
+            if (member) {
+                member.kick().then((member) => {
+                    message.channel.send("Yes master, " + member.displayName + " has been kicked.")
+                })
+            } else {
                 message.channel.send("I am unable to kick " + member.displayName + ", I am inferior.")
-            })
+            }
         } else {
-            message.channel.send(member.displayName + " shutup, you pleb.")
+            message.channel.send("Don't tell me what to do, you pleb.")
         }
 
         // Set new playing with to whoever talked to him.
